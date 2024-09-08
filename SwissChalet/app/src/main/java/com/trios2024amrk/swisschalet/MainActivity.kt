@@ -5,12 +5,17 @@ import android.os.Bundle
 import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.trios2024amrk.swisschalet.databinding.ActivityMainBinding
 import com.trios2024amrk.swisschalet.ui.main.MainFragment
+import com.trios2024amrk.swisschalet.ui.main.MainViewModel
+import com.trios2024amrk.swisschalet.ui.main.MainViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        viewModel = ViewModelProvider(this,
+            MainViewModelFactory(PreferenceManager.getDefaultSharedPreferences(this))
+        )
+            .get(MainViewModel::class.java)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, MainFragment.newInstance())
@@ -44,6 +53,8 @@ class MainActivity : AppCompatActivity() {
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
             dialog.dismiss()
+            viewModel.saveList(TaskList(listTitleEditText.text.toString()))
+
         }
 
 
