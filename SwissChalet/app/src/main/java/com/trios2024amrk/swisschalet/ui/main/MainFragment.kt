@@ -11,13 +11,21 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.trios2024amrk.swisschalet.R
+import com.trios2024amrk.swisschalet.TaskList
 import com.trios2024amrk.swisschalet.databinding.FragmentMainBinding
 
-class MainFragment : Fragment() {
+class MainFragment(val clickListener: MainFragmentInteractionListener) :
+    Fragment(), ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+
+
+    interface MainFragmentInteractionListener {
+        fun listItemTapped(list: TaskList)
+    }
+
     private lateinit var binding: FragmentMainBinding
 
     companion object {
-        fun newInstance() = MainFragment()
+        fun newInstance(clickListener: MainFragmentInteractionListener) = MainFragment(clickListener)
     }
 
     private lateinit var viewModel: MainViewModel
@@ -40,7 +48,7 @@ class MainFragment : Fragment() {
             PreferenceManager.getDefaultSharedPreferences(requireActivity())))
             .get(MainViewModel::class.java)
 
-           val recyclerViewAdapter = ListSelectionRecyclerViewAdapter(viewModel.lists)
+        val recyclerViewAdapter = ListSelectionRecyclerViewAdapter(viewModel.lists, this)
            binding.menuRecyclerview.adapter = recyclerViewAdapter
            viewModel.onListAdded = {
                recyclerViewAdapter.listsUpdated()
@@ -48,6 +56,9 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    override fun listItemClicked(list: TaskList) {
+        clickListener.listItemTapped(list)
+    }
 
 
 }
