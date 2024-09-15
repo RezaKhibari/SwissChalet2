@@ -6,11 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.trios2024amrk.swisschalet.R
-
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.trios2024amrk.swisschalet.databinding.ListDetailFragmentBinding
+import com.trios2024amrk.swisschalet.ui.detail.ListItemsRecyclerViewAdapter
 
 
 class ListDetailFragment : Fragment() {
+
+    lateinit var binding: ListDetailFragmentBinding
 
     companion object {
         fun newInstance() = ListDetailFragment()
@@ -22,14 +25,24 @@ class ListDetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
        // viewModel = ViewModelProvider(requireActivity()).get(ListDetailViewModel::class.java)
+        val recyclerAdapter = ListItemsRecyclerViewAdapter(viewModel.list)
+        binding.listItemsRecyclerview.adapter = recyclerAdapter
+        binding.listItemsRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+
+        viewModel.onTaskAdded = {
+            recyclerAdapter.notifyDataSetChanged()
+        }
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.list_detail_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
+
+        binding = ListDetailFragmentBinding.inflate(inflater, container, false)
+
+
+        return binding.root
     }
+
 
 }
